@@ -1,2 +1,2 @@
 # ha1ku
-a github-for-noobs project
+A github-for-noobs project, as part of my learning experience.
