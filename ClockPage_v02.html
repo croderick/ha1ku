@@ -1,0 +1,101 @@
+<html><head><title>CLOCK</title></head>
+<body>
+
+<canvas id="Canvas"></canvas>
+
+<script type="text/javascript">
+// === User-defined variables ===
+var R   =  15;  // radius of "seconds" counter measured in pixels
+var CHF = 3/4;  // "clock height fraction" of window height
+var CWF = 3/5;  // "clock width fraction" of window width
+var CClour = "rgb(0,32,32)";
+var CFont  = "Century";
+
+
+// === Don't edit below this line ===
+var K = document.getElementById('Canvas');  //  Identifier for the window frame.
+var ctx = K.getContext('2d');  //  Used for all canvas drawing commands.
+var ww, wh;  //  will hold "window width" and "window height"
+//	Every time the window is modified, resize the canvas.
+ResizeCanvas = function() {
+	ww = window.innerWidth;
+	wh = window.innerHeight;
+	K.width  = ww;
+	K.height = wh;
+	K.style.position = 'fixed';
+	K.style.left = 0;
+	K.style.top  = 0;
+};
+window.onload = ResizeCanvas();
+window.onresize = function () {
+	ResizeCanvas();
+};
+
+
+
+var H = new Number();  // Hours
+var M = new Number();  // Minutes
+var S = new Number();  // Seconds
+
+function UpdateTime ()  {
+var now = new Date();
+H = now.getHours();
+M = now.getMinutes();
+S = now.getSeconds();
+}
+
+function GetTimeString ()  {
+return ""+ 
+	( (H<10) ? ("0"+H) : H ) +":"+ 
+	( (M<10) ? ("0"+M) : M ) ;
+	// ( (M<10) ? ("0"+M) : M ) +":"+ ( (S<10) ? ("0"+S) : S );
+}
+
+function DrawTimeHM ()  {
+var ClockHeight = wh*CHF;
+var ClockWidth  = ww*CWF;
+ctx.save();{
+ctx.font = "bold "+ ClockHeight +"px " +CFont;
+ctx.fillStyle = CClour;
+ctx.textAlign    = "center";
+ctx.textBaseline = "middle";
+ctx.fillText(
+	GetTimeString() ,
+	ww/2 , wh/2  ,  // at center
+	ClockWidth  // scale string to fraction of width of window
+	);
+}ctx.restore();
+}
+
+function DrawTimeS ()  {
+ctx.save();{
+ctx.translate( ww-(R+3) , wh-(R+3) );
+ctx.beginPath();
+	ctx.strokeStyle = "rgb(220,220,220)";
+	ctx.lineWidth = 1;
+	ctx.arc( 0.0 , 0.0 , R*9/10 , 0.0 , 2.0*Math.PI , true );
+	ctx.stroke();
+var theta = 2*Math.PI * (S-15)/60;
+ctx.beginPath();
+	ctx.strokeStyle = "rgb(0,0,0)";
+	ctx.lineWidth = 2;
+	ctx.moveTo(0,0);
+	ctx.lineTo( +R*Math.cos(theta) , R*Math.sin(theta) );
+	ctx.stroke();
+}ctx.restore();
+}
+
+setInterval(
+function () {
+	UpdateTime();
+	ctx.clearRect( 0,0 , ww,wh );
+	DrawTimeHM();
+	DrawTimeS();
+},
+100);
+
+</script>
+
+
+</body>
+</html>
